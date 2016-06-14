@@ -129,11 +129,17 @@ function TwitterWidget(ngTweetLogger, TwitterWidgetFactory) {
         },
         template: '<div class="ngtweet-wrapper" ng-transclude></div>',
         link: function(scope, element, attrs) {
-            ngTweetLogger.debug('Linking', element, attrs);
+            
+            
+            scope.$watch('twitterWidgetId', function(newValue, oldValue) {
+                if (newValue)
+                    ngTweetLogger.debug('Linking', element, attrs);
             if (!angular.isUndefined(scope.twitterWidgetId)) {
                 if (!angular.isString(scope.twitterWidgetId)) {
                     ngTweetLogger.warn('twitterWidgetId should probably be a string due to loss of precision.');
                 }
+                angular.element(element[0]).empty();
+                
                 TwitterWidgetFactory.createTweet(scope.twitterWidgetId, element[0], scope.twitterWidgetOptions).then(function success(embed) {
                     ngTweetLogger.debug('Success!!!');
                 }).catch(function creationError(message) {
@@ -142,6 +148,7 @@ function TwitterWidget(ngTweetLogger, TwitterWidgetFactory) {
             } else {
                 TwitterWidgetFactory.load(element[0]);
             }
+            });
         }
     };
 }

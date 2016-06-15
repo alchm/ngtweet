@@ -124,12 +124,11 @@ function TwitterWidget(ngTweetLogger, TwitterWidgetFactory) {
         replace: true,
         transclude: true,
         scope: {
-            twitterWidgetId: '=',
+            twitterWidgetId: '=?',
             twitterWidgetOptions: '='
         },
         template: '<div class="ngtweet-wrapper" ng-transclude></div>',
         link: function(scope, element, attrs) {
-            
             
             scope.$watch('twitterWidgetId', function(newValue, oldValue) {
                 if (newValue)
@@ -190,7 +189,11 @@ function TwitterWidgetFactory($document, $http, ngTweetLogger, twitterWidgetURL,
             return deferred.promise;
         }
         deferred = $q.defer();
-        startScriptLoad();
+        
+        if(angular.isUndefined($window.twttr)){
+            startScriptLoad();
+        }
+        
         $window.twttr.ready(function onLoadTwitterScript(twttr) {
             ngTweetLogger.debug('Twitter script ready');
             twttr.events.bind('rendered', onTweetRendered);
